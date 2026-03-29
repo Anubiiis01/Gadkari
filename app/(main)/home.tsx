@@ -1,7 +1,8 @@
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { StatusBar } from 'react-native';
 import * as Location from 'expo-location';
 import React, { useEffect, useState, memo } from 'react';
+
 import {
   View,
   Text,
@@ -183,13 +184,16 @@ export default function HomeScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  // 📍 Auto-Fetch Location on Mount
+  // 📍 Auto-Fetch Location on Mount (ADD THESE LOGS)
   useEffect(() => {
     (async () => {
+      console.log('📍 Fetching location...');
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
+        console.log('🔐 Permission status:', status);
         
         if (status !== 'granted') {
+          console.log('❌ Location permission denied');
           setLocation('Panvel, Maharashtra');
           setLocationLoading(false);
           return;
@@ -198,11 +202,13 @@ export default function HomeScreen() {
         const currentLocation = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Balanced,
         });
+        console.log('📍 Coords:', currentLocation.coords);
 
         const address = await Location.reverseGeocodeAsync({
           latitude: currentLocation.coords.latitude,
           longitude: currentLocation.coords.longitude,
         });
+        console.log('🏠 Address:', address);
 
         if (address.length > 0) {
           const { city, region, country } = address[0];
@@ -211,10 +217,11 @@ export default function HomeScreen() {
           setLocation('Current Location');
         }
       } catch (error) {
-        console.error('Location error:', error);
+        console.error('❌ Location error:', error);
         setLocation('Panvel, Maharashtra');
       } finally {
         setLocationLoading(false);
+        console.log('✅ Location loading complete');
       }
     })();
   }, []);
@@ -224,7 +231,9 @@ export default function HomeScreen() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === 'granted') {
-        const currentLocation = await Location.getCurrentPositionAsync({});
+        const currentLocation = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
         const address = await Location.reverseGeocodeAsync({
           latitude: currentLocation.coords.latitude,
           longitude: currentLocation.coords.longitude,
