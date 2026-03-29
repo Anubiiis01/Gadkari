@@ -162,20 +162,21 @@ export default function CategoriesScreen() {
 {filteredPlaces.map((place) => {
   const markerColor = getMarkerColor(place.difficulty);
   return (
-    <Marker
-      key={place.id}
-      coordinate={place.coordinates}
-      onPress={() => focusMap(place.coordinates)}
-      tracksViewChanges={false}
-      anchor={{ x: 0.5, y: 1 }} // Ensures the tip of the pin points to the exact coordinate
-    >
-      <View style={styles.pinWrapper}>
-        <View style={[styles.pinShape, { backgroundColor: markerColor }]}>
-          <View style={styles.pinInnerCircle} />
-        </View>
-        <View style={[styles.pinTip, { borderTopColor: markerColor }]} />
-      </View>
-    </Marker>
+<Marker
+  key={place.id}
+  coordinate={place.coordinates}
+  onPress={() => focusMap(place.coordinates)}
+  // The anchor {0.5, 1} ensures the bottom-center of the pin stays on the coordinate
+  anchor={{ x: 0.5, y: 1 }}
+> // Ensures the tip of the pin points to the exact coordinate
+    
+<View style={styles.pinWrapper}>
+    <View style={[styles.pinMainBody, { backgroundColor: markerColor }]}>
+      <View style={styles.pinInnerWhiteDot} />
+    </View>
+    <View style={[styles.pinTriangleTip, { borderTopColor: markerColor }]} />
+  </View>
+</Marker>
   );
 })}
       </MapView>
@@ -771,6 +772,41 @@ const styles = StyleSheet.create({
     borderRightColor: 'transparent',
     marginTop: -6, // Pulls tip up to connect with the pinShape
     zIndex: -1,
+  },
+
+  /* 📍 UPDATED PIN STYLES (No Rotation) */
+  
+  pinMainBody: {
+    width: 30,
+    height: 30,
+    borderRadius: 15, // Perfect circle
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF', // White ring for better contrast on map
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 6,
+  },
+  pinInnerWhiteDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#FFFFFF',
+  },
+  pinTriangleTip: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderTopWidth: 10,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    marginTop: -2, // Slight overlap to prevent a gap
   },
 
   /* SPACER */
